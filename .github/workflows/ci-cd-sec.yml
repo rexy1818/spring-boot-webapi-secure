@@ -68,7 +68,6 @@ jobs:
       - uses: github/codeql-action/autobuild@v3
       - uses: github/codeql-action/analyze@v3
 
-  # --- [CAMBIO AQUI]: Job añadido para SAST con Semgrep (Obligatorio) ---
   sast-semgrep:
     name: SAST - Semgrep
     runs-on: ubuntu-latest
@@ -76,13 +75,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # CAMBIO: Ejecución del escáner Semgrep forzando la salida en JSON y evitando bloqueo del pipeline
       - name: Ejecutar escaneo Semgrep JSON
         run: |
           pip install semgrep
           semgrep scan --config auto --json --output semgrep-report.json || true
 
-      # CAMBIO: Subida del reporte Semgrep en JSON como artifact para DefectDojo
       - name: Subir reporte Semgrep JSON como Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -165,24 +162,21 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      # --- [CAMBIO AQUI]: Trivy configurado para generar JSON y evitar bloqueo ---
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.36.0
+        uses: aquasecurity/trivy-action@master
         with:
           image-ref: ${{ steps.meta.outputs.tags }}
-          format: 'json'             # CAMBIO: Formato cambiado a 'json' requerido para DefectDojo
-          output: 'trivy-report.json'  # CAMBIO: Archivo de salida especificado como JSON
+          format: 'json'
+          output: 'trivy-report.json'
           severity: 'CRITICAL,HIGH'
-          exit-code: '0'             # CAMBIO: Ajustado a 0 temporalmente para asegurar generación y disponibilidad de evidencias
+          exit-code: '0'
 
-      # --- [CAMBIO AQUI]: Paso añadido para subir el reporte JSON como Artifacts ---
       - name: Subir reporte Trivy JSON como Artifact
         uses: actions/upload-artifact@v4
         with:
           name: trivy-report
           path: trivy-report.json
           retention-days: 7
-
 
       - name: Push image to GHCR
         id: push
@@ -195,9 +189,6 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-  # ------------------------------------------------------------------
-  # Deploy to Staging
-  # ------------------------------------------------------------------
   deploy-staging:
     name: Deploy to Staging
     runs-on: ubuntu-latest
@@ -225,9 +216,6 @@ jobs:
           kubectl apply -f k8s/staging/
           kubectl rollout status deployment/your-app -n staging --timeout=120s
 
-  # ------------------------------------------------------------------
-  # Deploy to Production
-  # ------------------------------------------------------------------
   deploy-production:
     name: Deploy to Production
     runs-on: ubuntu-latest
