@@ -175,13 +175,14 @@ jobs:
           severity: 'CRITICAL,HIGH'
           exit-code: '0'             # CAMBIO: Ajustado a 0 temporalmente para asegurar generación y disponibilidad de evidencias
 
-      # --- [CAMBIO AQUI]: Paso añadido para subir el reporte JSON como Artifact ---
+      # --- [CAMBIO AQUI]: Paso añadido para subir el reporte JSON como Artifacts ---
       - name: Subir reporte Trivy JSON como Artifact
         uses: actions/upload-artifact@v4
         with:
           name: trivy-report
           path: trivy-report.json
           retention-days: 7
+
 
       - name: Push image to GHCR
         id: push
