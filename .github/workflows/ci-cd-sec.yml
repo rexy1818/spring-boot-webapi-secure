@@ -206,6 +206,7 @@ jobs:
             docker rm spring-app-staging || true
             docker run -d --name spring-app-staging -p 8080:8080 ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
+
   deploy-production:
     name: Deploy to Production (EC2)
     runs-on: ubuntu-latest
