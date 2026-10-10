@@ -13,7 +13,7 @@ public class SecurityConfig {
         // LAB: configuracion deliberadamente permisiva para analizar control de acceso y CSRF.
         return http
                 .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
                 .build();
     }
 }
