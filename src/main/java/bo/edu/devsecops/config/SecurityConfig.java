@@ -8,15 +8,12 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
-@Bean
+    @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        // LAB: configuracion deliberadamente permisiva para analizar control de acceso y CSRF.
         return http
                 .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                    // Permite explícitamente la ruta de administración con el prefijo /api/ y productos
-                    .requestMatchers("/api/admin/**", "/admin/**", "/products/**", "/api/products/**").permitAll()
-                    .anyRequest().authenticated()
-                )
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
                 .build();
     }
 }
